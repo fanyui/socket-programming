@@ -18,21 +18,40 @@ server_address.sin_family = AF_INET;
 server_address.sin_addr.s_addr = htonl(INADDR_ANY);
 server_address.sin_port = htons(8080);
 server_len = sizeof(server_address);
-
 bind(server_sockfd, (struct sockaddr *)&server_address, server_len);
 
 listen(server_sockfd, 5);
 while(1) {
-char ch;
+int num1;
+	int num2;
+int operator;
+int result;
 printf("server waiting\n");
 client_len = sizeof(client_address);
 client_sockfd = accept(server_sockfd,
 (struct sockaddr *)&client_address, &client_len);
-read(client_sockfd, &ch, 1);
-printf("%c",ch);
-ch++;
-sleep(5);
-write(client_sockfd, &ch, 1);
-close(client_sockfd);
+read(client_sockfd, &num1, 4);
+read(client_sockfd, &num2, 4);
+read(client_sockfd, &operator, 4);
+//result=num1+num2;
+if(operator=='/' && num2==0)
+result=100000;
+else{
+if (operator=='+')
+result=num1+num2;
+else if (operator=='-')
+result=num1-num2;
+else if(operator=='*')
+result=num1*num2;
+else if(operator=='/')
+result=num1/num2;
+else if(operator=='%')
+result=num1%num2;
+else result=100000;
 }
+write(client_sockfd, &result, sizeof(result));
+close(client_sockfd);
+
+}
+
 }
